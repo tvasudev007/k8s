@@ -1,6 +1,6 @@
 # Kuberenetes cluster setup 
 
-This repository is intended to setup a spin up a kubernetes cluster using kubeadm in Azure cloud
+This repository is intended to spin up a kubernetes cluster using kubeadm in Azure cloud
 
 
 ### Prerequisites
