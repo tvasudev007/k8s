@@ -1,0 +1,23 @@
+# Local .terraform directories
+**/.terraform/*
+**/terraform.d/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Misc files
+.DS_Store
+*.aws
+*.swp
+*.idea/*
+
+
+*kubeconfig*
+/terraform/us-east/aks/.terraform/
+.gitignore
+.idea/
+README.md
+ansible/
+terraform/
+/.idea/
