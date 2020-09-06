@@ -22,7 +22,6 @@ variable "prefix-worker-2" {
   default = "worker-2"
 }
 
-
 variable "admin-user" {
   default = "vasudev007"
 }

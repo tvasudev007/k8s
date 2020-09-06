@@ -37,11 +37,10 @@ resource "azurerm_virtual_machine" "vm-worker-2" {
   os_profile {
     computer_name  = "worker-2"
     admin_username = "${var.admin-user}"
-    admin_password = "Password1234!"
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
 
     ssh_keys {
       path     = "/home/${var.admin-user}/.ssh/authorized_keys"

@@ -3,5 +3,4 @@ variable "prefix" {
 }
 
 variable "my_public_ip" {
-  default = "X.X.X.X"
 }

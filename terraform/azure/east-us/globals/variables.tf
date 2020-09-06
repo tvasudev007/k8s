@@ -7,5 +7,4 @@ variable "location" {
 }
 
 variable "subscription-id" {
-  default = ""
 }
