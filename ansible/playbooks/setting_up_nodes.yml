@@ -1,0 +1,77 @@
+---
+- hosts: kubernetes:children
+  become: yes
+  vars_files:
+    - env_variables
+  tasks:
+    - name: Make sure br_netfilter is loaded
+      shell: lsmod | grep br_netfilter
+      register: br_netfilter_loaded
+      failed_when: br_netfilter_loaded.rc != 1 and br_netfilter_loaded.rc != 0
+
+    - name: Load br_netfilter explicitly
+      shell: sudo modprobe br_netfilter
+
+    - name: Make sure iptables to correctly see bridged traffic
+      shell: sysctl net.bridge.bridge-nf-call-iptables=1
+
+    - name: Reload sysctl after changes done to net.bridge
+      shell: sysctl --system
+      become: sudo
+
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Update apt and install apt-transport-https
+      apt: update_cache=yes name=apt-transport-https state=latest
+
+    - name: Add Kubernetes GPG apt Key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes Repository
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+
+    - name: Update apt and install kubelet
+      become: true
+      apt: update_cache=yes name=kubelet state=latest
+
+    - name: Update apt and install kubeadm
+      become: true
+      apt: update_cache=yes name=kubeadm state=latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

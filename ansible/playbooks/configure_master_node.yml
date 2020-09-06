@@ -1,0 +1,58 @@
+---
+- hosts: kubernetes-master-nodes
+  become: yes
+  vars_files:
+    - env_variables
+  tasks:
+    - name: Pulling images required for setting up a Kubernetes cluster
+      shell: kubeadm config images pull
+
+    - name: Resetting kubeadm
+      shell: kubeadm reset -f
+
+    - name: Gather facts from master server
+      setup:
+        filter: ansible_default_ipv4.address
+
+    - name: kubeadm init
+      shell: kubeadm init --pod-network-cidr {{cidr_v}} --apiserver-advertise-address={{ ansible_default_ipv4.address }}
+      become: yes
+      become_user: root
+      register: kube_token
+
+    - name: Storing Logs and Generated token for future purpose.
+      local_action: copy content={{ kube_token.stdout }} dest={{ token_file }}
+      sudo: False
+
+    - name: Copying .kube/config
+      shell: |
+        mkdir -p $HOME/.kube
+        sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+        sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+    - name: Copying .kube/config file contents
+      shell: |
+        cat $HOME/.kube/config
+      register: kube_config
+
+
+    - name: Storing kube config
+      local_action: copy content={{ kube_config.stdout }} dest={{ kube_conf_file }}
+      sudo: False
+
+
+    - name: Deploy pod network
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+
+
+
+
+
+
+
+
+
+
